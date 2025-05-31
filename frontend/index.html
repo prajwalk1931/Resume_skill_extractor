@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Skill Extractor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #6c757d;
+        --success-color: #2ecc71;
+        --danger-color: #e74c3c;
+        --warning-color: #f1c40f;
+        --info-color: #3498db;
+        --light-color: #ecf0f1;
+        --dark-color: #2c3e50;
+        --gradient-start: #6c5ce7;
+        --gradient-end: #a368d6;
+        --card-shadow: rgba(0, 0, 0, 0.1);
+        --hover-shadow: rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container {
+        flex: 1;
+        padding: 2rem;
+    }
+
+    .upload-area {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 10px 30px var(--card-shadow);
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+
+    .upload-area:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px var(--hover-shadow);
+    }
+
+    .upload-area h2 {
+        color: var(--dark-color);
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        font-size: 2rem;
+    }
+
+    .upload-area p {
+        color: var(--secondary-color);
+        margin-bottom: 2rem;
+        font-size: 1.2rem;
+        line-height: 1.6;
+    }
+
+    .upload-area .btn {
+        padding: 1rem 2.5rem;
+        font-size: 1.2rem;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+        color: white;
+        border: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .upload-area .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px var(--hover-shadow);
+        background: linear-gradient(135deg, var(--gradient-end), var(--gradient-start));
+    }
+
+    #resultArea {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 10px 30px var(--card-shadow);
+    }
+
+    .result-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 25px var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+    }
+
+    .result-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px var(--hover-shadow);
+    }
+
+    .result-card h4 {
+        color: var(--dark-color);
+        margin-bottom: 1.5rem;
+        border-bottom: 3px solid var(--gradient-start);
+        padding-bottom: 0.75rem;
+        font-weight: 700;
+        font-size: 1.5rem;
+    }
+
+    .basic-info p {
+        margin-bottom: 1.2rem;
+        font-size: 1.2rem;
+        color: var(--dark-color);
+        font-weight: 500;
+    }
+
+    .basic-info p strong {
+        color: var(--gradient-start);
+        font-weight: 600;
+    }
+
+    .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.8rem;
+        margin-top: 1.5rem;
+    }
+
+    .skill-badge {
+        text-align: center;
+    }
+
+    .skill-badge .badge {
+        padding: 0.8rem 1.8rem;
+        font-size: 1rem;
+        border-radius: 30px;
+        background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+        color: white;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
+    }
+
+    .loading-spinner {
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Loading animation */
+    .loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h1 class="text-center mb-5">Resume Skill Extractor</h1>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div id="dropZone" class="upload-area text-center">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3 class="mb-3">Drag & Drop your resume here</h3>
+                        <p class="mb-3">or click to browse</p>
+                        <p class="text-muted">(Only PDF files are accepted)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="resultArea" class="d-none">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="result-card">
+                        <h4>Basic Information</h4>
+                        <div id="basicInfo"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="result-card">
+                        <h4>Extracted Skills</h4>
+                        <div id="skillsList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
+    <script src="app.js"></script>
+</body>
+</html>
